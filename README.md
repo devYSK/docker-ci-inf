@@ -220,8 +220,26 @@
 * ### 예제 : Hello문구 출력하는 도커 이미지 만들기
 1. 도커 파일을 만들 폴더 하나 만들기 ex) dockerfile-folder
 2. 방금 생성한 도커 파일 폴더를 에디터를 이용해서 실행(vscode 추천)
-3. 파일 하나를 생성, 이름은 dockerfile
+3. 파일 하나를 생성, 이름은 dockerfile(확장자 없음)
 4. 그안에 먼저 어떻게 진행해 나갈지 기본적인 토대를 명시 
+
+5. 베이스 이미지부터 실제 값으로 추가해주기
+6. 베이스 이미지는 ubuntu나 centos 등을 써도 되지만 hello출력 기능은 굳이 사이즈가 큰 베이스 이미지를 쓸 필요가 없기에 사이즈가 작은 alpine 베이스 이미지 사용 
+7. 컨테이너 시작시 실행될 명령어를 넣어준다.
+
+```docker
+# 베이스 이미지 명시
+# FROM baseImage
+FROM alpine
+
+# 추가적으로 필요한 파일 다운로드
+# RUN command
+
+
+# 컨테이너 시작시 실행될 명령어 명시
+# CMD [ "executable" ]
+CMD [ "echo", "hello"]
+```
 
 * #### 도커파일 명령어
   * FROM : 이미지 생성시 기반이 되는 이미지 레이어 
@@ -232,7 +250,18 @@
     * 이 명령어는 Dockerfile내 1회만 쓸 수 있따.  
 
 
+# 도커파일로 도커 이미지 만들기 
 
+* ![](images/eba2bd12.png)
+
+* 도커 파일에 입력된 것들이 도커 클라이언트에 전달되어서 도커 서버가 인식하게 하여야 한다
+* 명령어 : docker build ./ 또는 docker build .
+
+* ![](images/40f6bc1e.png)
+
+* 도커 이미지에 이름주기 
+* docker build -t [youngsoo/hello:latest] .
+  * 옵션 [-t 나의도커아이디 / 저장소or프로젝트 이름 : 버전 ] 
 
 
 
