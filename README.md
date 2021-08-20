@@ -213,6 +213,10 @@
 2. 추가적으로 필요한 파일을 다운 받기 위한 몇가지 명령어를 명시해준다.(파일 스냅샷에 해당)
 3. 컨테이너 시작시 실행 될 명령어를 명시해준다.(시작시 실행 될 명령어에 해당)
 
+* 도커 파일 이미지 이름 지정
+* docker build -t imagename:0.0
+* -t 옵션 
+
 ### 베이스 이미지
 
 * ![](images/cce9b90e.png)
@@ -267,5 +271,12 @@ CMD [ "echo", "hello"]
 # 도커를 이용해서 Node.js 어플 만들기
 #### https://nodejs.org/fr/docs/guides/nodejs-docker-webapp/
 
+# 생성한 이미지로 어플리케이션 접근이 안되는 이유(포트 맵핑)
 
+
+* docker run 이미지 이름 
+* 에서 다음과 같이 실행한다
+* docker run -p 49160:8080 이미지이름 
+
+* ![](images/5068a2cd.png)
 
