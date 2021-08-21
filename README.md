@@ -277,6 +277,91 @@ CMD [ "echo", "hello"]
 * docker run 이미지 이름 
 * 에서 다음과 같이 실행한다
 * docker run -p 49160:8080 이미지이름 
+  * 49160 등 내부 포트는 아무거나 줘도 된다 ( 안쓰는것)
+  * 그럼 외부에서 49160 등 앞 포트로 접속하면 된다. 
+  * localhost:49160
+
 
 * ![](images/5068a2cd.png)
+
+# 워크디렉토리 (Working Directory)
+
+* 도커 이미지 안에서 어플리케이션 소스 코드를 갖고 있을 디렉토리를 생성하는 것 
+
+* 현재 만들어놓은 이미지의 Root 디렉토리 보는법
+  * docker run -it <이미지이름> 명령어
+
+
+```shell
+FROM node:16
+
+# create app directory
+WORKDIR /usr/src/app
+
+# 도커 컨테이너 안에 저장
+COPY package.json ./
+```
+* 
+* ![](images/1a869fdb.png)
+
+* 워크 디렉토리를 지정하게 되면, 루트부터 접근하는게 아닌 워크 디렉토리부터 접근하게된다
+  *  따라서 명령어도 워크 디렉토리 기반에서부터 시작한다. 
+
+* 워크 디렉토리를 지정하지 않고 그냥 copy할때의 문제점
+  * 베이스 이미지에 home이라는 폴더가 있을 시, 새로 추가되는 폴더 이름이 home이라면 중복되서 그냥 덮어씌어져 버린다.
+    * 원래 파일 시스템의 중요한 파일과 이름이 같으면 중요한 원래 파일이 날라간다.  
+  * 모든 파일이 한 디렉토리에 들어가버리니 정리정돈이 안된다.
+  * 예를들어 루트에 다 파일이 몰릴수도 있다.
+
+# 도커 이미지 삭제
+
+* 현재 이미지 확인 : docker images
+* 이미지 삭제 : docker rmi [이미지id]
+* 컨테이너 삭제 전 이미지 삭제 : docker rmi -f [이미지id]
+
+## 컨테이너 삭제
+
+* 동작중인 컨테이너 확인 : docker ps
+* 정지된 컨테이너 확인 : docker ps -a
+* 컨테이너 삭제 : docker rm [컨테이너 id]
+* 삭제된 것 확인 : docker ps -a
+* 복수개 삭제 : docker rm [id1], [id2]
+* 컨테이너 모두 삭제 : docker rm `docker ps -a -q`
+
+# 어플리케이션 소스 변경으로 다시 빌드하는법
+
+어플 실행 순서
+* 도커파일작성 -> 빌드 -> 도커파일로 이미지 생성 -> run -> 컨테이너 생성후 앱 실행
+
+
+* 소스코드를 계속 변경시켜 변경 된 부분을 어플리케이션에 반영시킬라면 
+  * 이미지 생성부터 다시 실행시켜줘야한다. 
+
+* 그런데 이런식으로 하면 너무 비효율적이다. 
+* 그럼 어떻게? 
+
+* ![](images/80842c69.png)
+
+* npm install 할 때 불 필요한 다운로드를 피하기 위해서 이렇게 한다
+* 원래 모듈을 다시 받는 것은 모듈에 변화가 생겨야만 다시 받아야 하는데, 소스코드에 조금의 변화만 생겨도 모듈 전체를 다시 받는 문제점이 있다.
+> `그러므로 RUN npm install 전 단계에서 COPY 할 때는 오직 module에 관한것만 해주고,  
+>  RUN npm install 이후에 다시 모든 파일을 COPY 해준다. 
+
+```shell
+FROM node:16
+
+# create app directory
+WORKDIR /usr/src/app
+
+# 도커 컨테이너 안에 저장
+COPY package.json ./
+
+RUN npm install
+
+# Bundle app source
+COPY ./ ./
+
+CMD ["node", "server.js"]
+```
+
 
