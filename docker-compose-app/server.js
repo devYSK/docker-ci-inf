@@ -3,8 +3,8 @@ const redis = require("redis");
 //레디스 클라이언트 생성
 const client = redis.createClient({
     host: "redis-server",
-    port: 6379
-})
+    port: 6379,
+});
 
 const app = express();
 

@@ -409,4 +409,13 @@ const client = redis.createClient({
 ### 도커 환경에서 레디스 클라이언트 생성시 주의사항 
 
 * 도커 Compose를 사용할때는 host옵션을 docker-compose.yml 파일에 명시한 컨테이너 이름으로 주면 된다.
- 
+
+* 서로 다른 컨테이너 사이에 통신하려면 다른 방법을 써야한다.
+  * 멀티 컨테이너 상황에서 네트워크를 연결 시켜주기 위해선 docker compose를 사용해야한다. 
+* ![](images/bd44f1d9.png)
+
+* 이슈 : https://stackoverflow.com/questions/58854488/nodejs-redis-createclient-function?rq=1
+
+* 도커 컴포즈를 통해 작동시킨 컨테이너들을 한꺼번에 중단 시키려면 
+  * docker compose down 
+  * docker-compose.yml 있는 디렉토리에서 명령어를 실행 해야 한다. 
