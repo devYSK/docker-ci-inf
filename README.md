@@ -364,4 +364,25 @@ COPY ./ ./
 CMD ["node", "server.js"]
 ```
 
+# Docker Volume에 대하여 
 
+* 소스를 변경할 때 마다 변경된 소스 부분은 COPY한 후 이미지를 다시 빌드를 해주고 컨테이너를 다시 실행해줘야 변경된 소스가 반영이 된다 
+* 이러한 작업은 시간 소요가 크며 이미지도 너무 많이 빌드하기 때문에 VOLUME을 사용한다.
+* ![](images/f21d6cd1.png)
+
+## Volume 사용해서 어플리케이션 실행하는법
+* ![](images/d39df4cf.png)
+
+* 이렇게 volume을 이용해서 키면 빌드할 때 소스를 바꾸더라도 바꾼 코드가 적용이 된다
+* docker run -p 5000:8080 -v /usr/src/app/node_modules -v $(pwd):/usr/src/app <이미지이름>
+  * /usr/src/app 이건 dockerfiled의 workdir
+
+* 이러면, 도커 이미지를 빌드하지 않고 run만 해도 바꾼 코드가 적용이 된다. 
+
+
+# 도커 compose
+
+* docker compose는 다중 컨테이너 도커 애플리케이션을 정의하고 실행하기 위한 도구 
+
+* 실행 명령어 : docker-compose up 
+* 
