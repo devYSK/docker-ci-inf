@@ -385,4 +385,28 @@ CMD ["node", "server.js"]
 * docker compose는 다중 컨테이너 도커 애플리케이션을 정의하고 실행하기 위한 도구 
 
 * 실행 명령어 : docker-compose up 
-* 
+
+### Redis
+* 메모리 기반의 키-값구조. 모든 데이터를 메모리에 저장해서 빠르게 조회할 수 있는 비관계형 데이터베이스
+
+* 레디스 사용 이유
+  * 메모리에 저장하기 때문에 MySQL 같은 데이터베이스에 데이터를 저장하는 것과 데이터를 불러올 때 훨신 빠르게 처리 
+  * 영속적으로도 보관 가능 그래서 재부팅해도 데이터 유지. 
+
+* 노드에서 레디스 사용법
+  * redis-server를 작동시켜줘야한다.
+  * createClient()함수를 이용해서 클라이언트생성
+  * redis server가 작동하는 곳과 Node.js앱이 작동하는 곳이 다른 곳이라면 host인자와 port인자를 명시해주어야한다.
+```javascript
+const client = redis.createClient({
+  host: "https://redis-server.com",
+  port:6379
+});
+```
+
+* 레디스의 기본 포트 6379
+
+### 도커 환경에서 레디스 클라이언트 생성시 주의사항 
+
+* 도커 Compose를 사용할때는 host옵션을 docker-compose.yml 파일에 명시한 컨테이너 이름으로 주면 된다.
+ 
