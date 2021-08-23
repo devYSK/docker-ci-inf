@@ -416,6 +416,13 @@ const client = redis.createClient({
 
 * 이슈 : https://stackoverflow.com/questions/58854488/nodejs-redis-createclient-function?rq=1
 
+* docker-compose up -d 옵션을 주면 백그라운드로 실행 
+
 * 도커 컴포즈를 통해 작동시킨 컨테이너들을 한꺼번에 중단 시키려면 
   * docker compose down 
   * docker-compose.yml 있는 디렉토리에서 명령어를 실행 해야 한다. 
+
+# 개발환경과 운영환경 에서의 도커파일
+
+* 개발환경에서는 Dockerfile.dev
+* 운영환경에서는 Dockerfile
