@@ -452,6 +452,42 @@ const client = redis.createClient({
 
 * ![](images/d84c67dc.png)
 
+* docker-compose up
 
+# 테스트 코드도 자동 반영하는법
 
+* test를 위한 컨테이너를 compose 파일에 하나 더 만들어주고 volume을 이용하면 된다.
 
+# 운영환경을 위한 nginx
+
+* ![](images/98a3b3a0.png)
+
+* 왜 개발환경 서버와 운영환경 서버를 다른걸 써야하나?
+   * >개발에서 사용하는 서버는 소스를 변경하면 자동으로 전체 앱을 다시 빌드해서 변경 소스를 반영해주는 것 같이 개발환경에 특화된 기능들이 있기에 그러한 기능이 없는 nginx 서버보다 더욱 적합하다.    
+     그리고 운영환경에서는 소스를 변경할 때 다시 반영해 줄 필요가 없으며 개발에 필요한 기능들이 필요하지 않기에 더 깔끔하고 빠른 nginx를 웹 서버로 사용한다. 
+
+* 개발환경 도커 파일과 운영환경 도커 파일 비교
+* ![](images/3be0862f.png)
+
+* Dockerfile
+* ![](images/535d9ab2.png)
+
+* FROM as절 : 이 FROM 절부터 다음 FROM절 까지는 모두 builder stage라는것을 명시 
+
+* --from=builder : 다른 stagedㅔ 있는 파일을 복사할때 다른 stage 이름을 명시
+* /usr/src/app/build /usr/share/nginx/html 
+  * builder stage에서 생성된 파일들은 /usr/src/app/build에 들어가게 되며 그곳에 저장된 파일들을 /usr/share/nginx/html로 복사를 시켜줘서 nginx가 웹 브라우저의 http 요청이 올 때 마다 알맞은 파일을 전해줄 수 있게 만든다.
+
+* /usr/share/nginx/html : 이 장소로 build파일을 복사시킨다. 이 장소로 파일을 넣어두면 nginx가 알아서 client에서 요청이 들어올 때 알맞은 정적 파일들을 제공해준다.
+  * 이 장소는 설정을 통해서 바꿀 수 있다.
+
+* 큰 박스 두개를 위 아래로 설정하면, 
+1. 빌드 파일 생성(Builder Stage)
+2. nginx 가동하고 빌드폴더의 파일들을 웹 브라우저로 보여준다 .
+
+* 다음 작성된 Dockerfile로 이미지 생성
+   * docker build .
+
+* 이미지를 생성했다면 그 이미지를 이용해서 앱 실행
+  * docker run -p 8080:80 이미지 이름
+  * nginx의 기본 포트는 80 
