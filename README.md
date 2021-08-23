@@ -426,3 +426,32 @@ const client = redis.createClient({
 
 * 개발환경에서는 Dockerfile.dev
 * 운영환경에서는 Dockerfile
+
+* docker build -f Dockerfile.dev ./
+  * -f : 이미지를 빌드할 때 쓰일 도커 파일을 임의로 지정해준다  
+
+* 도커 환경에서 실행할 때는 로컬환경에서의 node_modules를 지워주는게 좋다 . 
+
+* docker run -it -p 3000:3000 이미지 이름
+
+
+# Volume 사용해서 리액트 or 도커 어플리케이션 실행하는법
+
+* docker run -p 3000:3000
+* -v /usr/src/app/node_modules
+  * 호스트 디렉토리에 node_modules는 없기에 컨테이너에 맵핑 하지 말라
+* -v $(pwd):/usr/src/app
+  * pwd 경로에 있는 디렉토리 혹은 파일을 /usr/src/app 경로에서 참조 
+* <이미지 아이디>  
+
+> docker run -p 3000:3000 -v /usr/src/app/node_modules -v $(pwd):/usr/src/app <이미지 아이디>  
+  * 이러면 변경시 바로 적용된다.
+
+
+# Docker Compose로 좀 더 간단하게 앱 실행 
+
+* ![](images/d84c67dc.png)
+
+
+
+

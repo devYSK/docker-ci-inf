@@ -15,7 +15,8 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Learn Reactadfadfadfasdfsadsfadsfsdfsdfsdfsdfsdfss
+          나는 항상 배가 고프다
         </a>
       </header>
     </div>
