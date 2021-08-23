@@ -491,3 +491,127 @@ const client = redis.createClient({
 * 이미지를 생성했다면 그 이미지를 이용해서 앱 실행
   * docker run -p 8080:80 이미지 이름
   * nginx의 기본 포트는 80 
+
+
+# 실제로 배포해보기 (테스트 & 배포)
+
+* ![](images/5ccc4e72.png)
+* 소스코드 test 성공시 aws에 배포 
+
+## Travis CI
+
+* https://travis-ci.org/ 에서 https://travis-ci.com 로 변경 
+
+* Travis CI는 Github에서 진행되는 오픈소스 프로젝트를 위한 지속적인
+  통합(Continuous Integration) 서비스이다. 2011년에 설립되어
+  2012년에 급성장하였으며 Ruby언어만 지원하였지만 현재 대부분의 개발
+  언어를 지원하고 있다. Travis CI를 이용하면 Github repository에 있
+  는 프로젝트를 특정 이벤트에 따라 자동으로 테스트, 빌드하거나 배포할 수
+  있다. Private repository는 유료로 일정 금액을 지불하고 사용할 수 있
+  다.
+
+### Travis CI 흐름
+* 로컬 git -> github -> travis ci -> aws 
+
+1. 로컬 git에 있는 소스를 github (remote)저장소에 push
+2. github master 저장소에 소스가 push되면 travis ci에게 소스가 push 되었다고 이야기
+3. travis ci는 업데이트된 소스를 github에서 가지고옴
+4. 깃헙에서 가져온 소스의 테스트 코드 실행
+5. 테스트 성공시 호스팅 사이트로 보내서 배포 
+
+
+* travis.yml 파일 작성
+* ![](images/84fbe362.png)
+
+```yaml
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - echo "start creating an image with dockerfile"
+  - docker build -t kim206gh/docker-react-app -f Dockerfile.dev .
+  
+script:
+  - docker run -e CI=true kim206gh/docker-react-app npm run test -- --coverage
+
+after_success:
+  - echo "Test success"
+
+```
+
+* sudo : 관리자 권한
+* language : 언어(플랫폼)
+* services : 도커 환경 구성
+* before_install : 스크립트 실행전
+* script : 실행할 스크립트
+* after_success : 테스트 성공후 할 일 
+
+# AWS
+
+* ![](images/6bc922cf.png)
+
+* Elastic Beanstalk 사용
+
+1. CreateApplication 클릭
+2. 어플리케이션 이름 정하기
+3. 플랫폼 선택
+4. 생성
+5. 앱 생성 후 배포
+
+## aws elastic beanstalk 배포를 위한 travis 소스코드
+
+```yaml
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - echo "start creating an image with dockerfile"
+  - docker build -t kim206gh/docker-react-app -f Dockerfile.dev .
+  
+script:
+  - docker run -e CI=true kim206gh/docker-react-app npm run test -- --coverage
+
+after_success:
+  - echo "Test success"
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "docker-react-app"
+  env: "Dockerreactapp-env"
+  bucket_name: "elasticbeanstalk-us-east-2-064875866284"
+  bucket_path: "docker-react-app"
+  on:
+    branch: master
+  access_key_id: AWS_ACCESS_KEY
+  secret_access_key : AWS_SECRET_ACCESS_KEY
+```
+
+* 공백 맞춤 주의!!
+
+* ![](images/8e4c4d4d.png)
+
+* travis ci의 aws 접근을 위한 api 생성
+* github -> travis ci -> aws
+  * aws 에서 제공해주는 secret key를 travis yml 파일에다가 적어준다.  
+
+* ![](images/1c558e21.png)
+
+* aws iam 권한 변경
+> AdministratorAccess-AWSElasticBeanstalk로 선택하시면 될 것 같아요!
+AWS 도큐먼트 보시면 'Previously, Elastic Beanstalk supported two other managed user policies, AWSElasticBeanstalkFullAccess and AWSElasticBeanstalkReadOnlyAccess. We plan on retiring these previous policies.' 라고 하면서 밑에 새로운 정책을 제시하고 있어요!
+링크 남깁니다~ https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.iam.managed-policies.html
+
+
+
+* ## <Travis CI>Skipping a deployment with the s3 provider because this branch is not permitted 에러
+* <Travis CI>Skipping a deployment with the s3 provider because this branch is not permitted
+
