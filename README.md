@@ -615,3 +615,51 @@ AWS 도큐먼트 보시면 'Previously, Elastic Beanstalk supported two other ma
 * ## <Travis CI>Skipping a deployment with the s3 provider because this branch is not permitted 에러
 * <Travis CI>Skipping a deployment with the s3 provider because this branch is not permitted
 
+# 다중 도커 환경 in AWS (다중 도커 컨테이너)
+* Docker 컨테이너 세트를 Elastic Beanstalk 애플리케이션으로 배포하는 방법을 설명하는 Elastic Beanstalk 고유의 JSON 파일
+* Dockerrun.aws.json 을 멀티 컨테이너 Docker 환경에 사용 가능
+  * 이 파일로 어떻게 다중 컨테이너를 작동 시킬지 Elastic Beanstalk에 알려주는것 
+  * ![](images/7f0daa20.png)
+    * Task에다가 어떻게 컨테이너를 실행할지를 정의해준다.
+      * Task Definition(작업 정의)
+    * 그리고 작업 정의를 등록할 때는 Container Definition을 명시해 줘야한다 
+
+* AWS에서 말하는 Task Definition(작업정의)에서 지정할 수 있는 것들. 
+  * 작업의 각 컨테이너에 사용할 도커 이미지
+  * 각 작업 또는 작업 내 각 컨테이너에서 사용할 CPU 및 메모리의 양
+  * 사용할 시작 유형으로서 해당 작업이 호스팅되는 인프라를 결정
+  * 작업의 컨테이너에 사용할 도커 네트워킹 모드
+  * 작업에 사용할 로깅 구성
+  * 컨테이너가 종료 또는 실패하더라도 작업이 계속 실행될지 여부
+  * 컨테이너 시작 시 컨테이너가 실행할 명령
+  * 작업의 컨테이너에서 사용할 데이터 볼륨
+  * 작업에서 사용해야 하는 IAM 역할 
+
+* 이 작업 정의를 등록하려면 Container Definition을 명시해줘야한다
+  * dockerrun.aws.json에 명시  
+
+##  Dockerrun.aws.json 작성하는법
+
+* ![](images/e70aa2da.png)
+
+## 다중 컨테이너 앱을 위한 EB 환경 생성
+
+* ![](images/182fe2b2.png)
+
+## VPC(virtual private cloud)와 security group 설정하기 
+
+* 인스턴스와 RDS를 연결하기 위해 
+
+## VPC란
+* VPC를 사용하면 AWS 클라우드에서 논리적으로 격리된 공간을 프로비저닝하여 고객이 정의하는 가상 네트워크에서 AWS 리소스를 시작할 수 있따.
+* 간단하게, EC2 인스턴스나 EB 인스턴스 혹은 RDS를 나의 아이디에서만 접근이 가능하게 격리된 네트워크에서 생성이 되게 해준다
+* 그러기에 다른 아이디로는 접근 하는것은 물론 보는것도 불가능해진다. 
+
+## Security group
+
+* inbound 트래픽 : 외부에서 ec2 인스턴스나 eb 인스턴스로 요청을 보내는 트래픽 .http, https, ssh
+* outbound 트래픽 : ec2인스턴스나 eb인스턴스에서 외부로 나가는 트래픽, 파일 다운로드, 트래픽 응답하는 경우도 포함 
+
+
+## VPC와 Security group을 통해 인스턴스와 rds가 통신하는법
+* 같은 vpc 안에 있는 aws 서비스 간에는 트래픽을 모두 허용할 수 있게 security group을 허용해준다. 
